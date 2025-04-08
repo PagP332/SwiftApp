@@ -22,7 +22,7 @@ export default function ForgotPassword() {
   }, [])
   return (
     <View style={styles.container}>
-      {!isKeyboardVisible && <SwiftLogo />}
+      {!isKeyboardVisible && <SwiftLogo absolute />}
       <View style={[{ justifyContent: "center", width: "100%" }]}>
         <ThemedText type="title" style={{ fontSize: 20, justifyContent: "center", textAlign: "center", marginBottom: 15 }}>
           FORGOT PASSWORD

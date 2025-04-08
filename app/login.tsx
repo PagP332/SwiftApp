@@ -28,9 +28,15 @@ export default function login() {
     }
   }, [])
 
+  const handleLogin = async () => {
+    setSession("12345")
+    console.log(session)
+    router.replace("/")
+  }
+
   return (
     <View style={styles.container}>
-      {!isKeyboardVisible && <SwiftLogo />}
+      {!isKeyboardVisible && <SwiftLogo absolute />}
       <View style={[{ justifyContent: "center", width: "100%" }]}>
         <ThemedText type="title" style={{ fontSize: 20, justifyContent: "center", textAlign: "center", marginBottom: 30 }}>
           LOGIN
@@ -73,14 +79,7 @@ export default function login() {
             <ThemedText style={{ fontSize: 14, color: "#0000FF" }}>Forgot your password?</ThemedText>
           </TouchableOpacity>
         </View>
-        <ThemedButton
-          onPress={() => {
-            console.log(formEmail)
-            console.log(formPassword)
-            setSession(true)
-          }}
-          text={"Login"}
-        />
+        <ThemedButton onPress={handleLogin} text={"Login"} />
         <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 20 }}>
           <ThemedText style={{ color: "#828282", fontSize: 12 }}>Need an account?</ThemedText>
           <TouchableOpacity onPress={() => router.push("/SignUp")}>
