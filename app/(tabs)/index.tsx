@@ -4,6 +4,8 @@ import SwiftLogo from "@/components/SwiftLogo"
 import { ThemedText } from "@/components/ThemedText"
 import ReportList from "@/components/ReportList"
 import SurfaceFlaw from "@/components/SurfaceFlaw"
+import { Link } from "expo-router"
+import { dummyData } from "@/constants/dummy"
 
 export default function index() {
   const [activeTab, setActiveTab] = useState(0)
@@ -31,37 +33,6 @@ export default function index() {
     }
   }, [activeReportID])
 
-  const dummyData = [
-    {
-      id: 1,
-      type: "surface",
-      report: "Surface Flaw Report #1",
-      datetime: "03/23/25 12:00 PM",
-      image: "../assets/images/surface_flaw_test.jpg",
-      data: {
-        trainNo: 1,
-        compNo: 4,
-        wheelNo: 2,
-        status: "Flawed",
-        recommendation: "For Replacment",
-      },
-    },
-    {
-      id: 2,
-      type: "wheel",
-      report: "Wheel Diameter Report #2",
-      datetime: "03/23/25 12:00 PM",
-      image: "../assets/images/wheel_diameter_test.jpg",
-      data: {
-        trainNo: 1,
-        compNo: 4,
-        wheelNo: 2,
-        diameter: "650 mm",
-        recommendation: "Good Condition, For Monitoring",
-      },
-    },
-  ]
-
   const handleActiveTab = (id) => {
     setActiveTab(id)
     setActiveReportID(id === 0 ? lastActiveSurfaceReportID : lastActiveWheelReportID)
@@ -81,9 +52,17 @@ export default function index() {
           <ThemedText style={[styles.text, activeTab === 2 && styles.activeText]}> </ThemedText>
         </TouchableOpacity>
       </View>
-      <View style={[{ flex: 1, padding: 14 }, styles.bottomContainers]}>
-        <SurfaceFlaw label={reportLabel} data={reportData} uri={reportImage} type={reportType} />
-      </View>
+      {activeReportID ? (
+        <Link href={`/${activeReportID}`} asChild style={[{ padding: 14 }, styles.bottomContainers]}>
+          <TouchableOpacity>
+            <SurfaceFlaw label={reportLabel} data={reportData} uri={reportImage} type={reportType} />
+          </TouchableOpacity>
+        </Link>
+      ) : (
+        <View style={[{ padding: 14, justifyContent: "center", alignItems: "center" }, styles.bottomContainers]}>
+          <ThemedText style={{ color: "#828282", fontSize: 12 }}>No report selected</ThemedText>
+        </View>
+      )}
       <View style={[{ flex: 1, marginBottom: 12, padding: 14 }, styles.bottomContainers]}>
         <ThemedText style={{ fontSize: 16, marginBottom: 5 }} type="title">
           REPORTS

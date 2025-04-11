@@ -30,7 +30,7 @@ export default function SurfaceFlaw({ uri, label, data, type, ...props }) {
     return (
       <>
         <View style={[{ flex: 2, justifyContent: "center", alignItems: "center" }]}>
-          {uri && <Image source={{ uri }} style={{ maxHeight: 120, width: "100%" }} resizeMode="contain" />}
+          <Image source={{ uri: uri }} style={{ maxHeight: 120, width: "100%", height: "100%" }} resizeMode="contain" />
           <ThemedText style={{ fontSize: 14, color: "black", textAlign: "center" }} type="title">
             {label}
           </ThemedText>
