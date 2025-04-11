@@ -53,7 +53,14 @@ export default function index() {
         </TouchableOpacity>
       </View>
       {activeReportID ? (
-        <Link href={`/${activeReportID}`} asChild style={[{ padding: 14 }, styles.bottomContainers]}>
+        <Link
+          href={{
+            pathname: `/${activeReportID}`,
+            params: { uri: reportImage, data: JSON.stringify(reportData || {}), label: reportLabel, type: reportType },
+          }}
+          asChild
+          style={[{ padding: 14 }, styles.bottomContainers]}
+        >
           <TouchableOpacity>
             <SurfaceFlaw label={reportLabel} data={reportData} uri={reportImage} type={reportType} />
           </TouchableOpacity>
@@ -73,7 +80,7 @@ export default function index() {
   )
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",

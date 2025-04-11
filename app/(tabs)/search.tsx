@@ -1,15 +1,22 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import SwiftLogo from "@/components/SwiftLogo"
 import ReportList from "@/components/ReportList"
 import { dummyData } from "@/constants/dummy"
 import { ThemedText } from "@/components/ThemedText"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
+import { Redirect, useRouter } from "expo-router"
 
 export default function search() {
   const [searchInput, setSearchInput] = useState("")
+  const router = useRouter()
+
   const handleActiveReport = (id) => {
-    console.log(id)
+    const active_id = dummyData.find((item) => item.id === id)
+    router.push({
+      pathname: `/${id}`,
+      params: { uri: active_id?.image, data: JSON.stringify(active_id?.data || {}), label: active_id?.report, type: active_id?.type },
+    })
   }
 
   return (

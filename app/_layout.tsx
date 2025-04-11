@@ -34,6 +34,7 @@ export default function RootLayout() {
       <SessionProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="[id]" options={{ headerShown: true }} />
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="SignUp" options={{ headerShown: false }} />
           <Stack.Screen name="ForgotPassword" options={{ headerShown: false }} />
