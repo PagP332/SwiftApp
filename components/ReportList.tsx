@@ -4,7 +4,8 @@ import { ThemedText } from "./ThemedText"
 
 export default function ReportList({ setActiveReport, data, ...props }) {
   const renderListItem = ({ item }) => {
-    item.report = item.report.length > 40 ? item.report.substring(0, 40) + "..." : item.report
+    item.report = String(item.report).length > 40 ? item.report.substring(0, 40) + "..." : item.report
+    item.id = item.id || item.report_id
     return (
       <TouchableOpacity
         key={item.id}

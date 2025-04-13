@@ -17,6 +17,7 @@ export default function TabLayout() {
   const { session, setSession } = useSession()
 
   if (!session) {
+    // console.log("redirecting to login")
     return <Redirect href="/login" />
   }
 

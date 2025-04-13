@@ -6,32 +6,78 @@ import ReportList from "@/components/ReportList"
 import SurfaceFlaw from "@/components/SurfaceFlaw"
 import { Link } from "expo-router"
 import { dummyData } from "@/constants/dummy"
+import { getReportDetails, getReportList, realtimeReportChannel, unsubToChannel } from "@/api/utils"
+import Loading from "@/components/Loading"
 
 export default function index() {
   const [activeTab, setActiveTab] = useState(0)
   const [activeReportID, setActiveReportID] = useState(null)
+
+  const [reportList, setReportList] = useState({})
+
   const [lastActiveSurfaceReportID, setLastActiveSurfaceReportID] = useState(0)
   const [lastActiveWheelReportID, setLastActiveWheelReportID] = useState(0)
+
   const [reportLabel, setReportLabel] = useState("")
   const [reportData, setReportData] = useState({})
   const [reportImage, setReportImage] = useState("")
   const [reportType, setReportType] = useState("")
 
+  const [isListLoading, setIsListLoading] = useState(false)
+  const [isDetailsLoading, setIsDetailsLoading] = useState(false)
+
   useEffect(() => {
+    const fetchDetails = async () => {
+      setIsDetailsLoading(true)
+      try {
+        let active_id = await getReportDetails(activeReportID)
+        // const active_id = dummyData.find((item) => item.id === activeReportID)
+        active_id = active_id[0]
+        // console.log("active details", active_id)
+        setReportLabel(active_id?.report)
+        setReportData(active_id?.data)
+        setReportImage(active_id?.image)
+        setReportType(active_id?.type)
+        if (active_id?.type === "surface") {
+          setActiveTab(0)
+          setLastActiveSurfaceReportID(active_id?.id)
+        } else {
+          setActiveTab(1)
+          setLastActiveWheelReportID(active_id?.id)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+      setIsDetailsLoading(false)
+    }
+
     console.log("Active Report: ", activeReportID)
-    const active_id = dummyData.find((item) => item.id === activeReportID)
-    setReportLabel(active_id?.report)
-    setReportData(active_id?.data)
-    setReportImage(active_id?.image)
-    setReportType(active_id?.type)
-    if (active_id?.type === "surface") {
-      setActiveTab(0)
-      setLastActiveSurfaceReportID(active_id?.id)
-    } else {
-      setActiveTab(1)
-      setLastActiveWheelReportID(active_id?.id)
+    if (activeReportID) {
+      fetchDetails()
     }
   }, [activeReportID])
+
+  useEffect(() => {
+    onRealtimeChange()
+    const channel = realtimeReportChannel(onRealtimeChange)
+    return () => unsubToChannel(channel)
+  }, [])
+
+  useEffect(() => {
+    console.log("isListLoading:", isListLoading)
+  }, [isListLoading])
+
+  useEffect(() => {
+    console.log("isDetailsLoading:", isDetailsLoading)
+  }, [isDetailsLoading])
+
+  const onRealtimeChange = async (payload) => {
+    // console.log("changes found ", payload)
+    setIsListLoading(true)
+    const list = await getReportList()
+    setReportList(list)
+    setIsListLoading(false)
+  }
 
   const handleActiveTab = (id) => {
     setActiveTab(id)
@@ -62,7 +108,7 @@ export default function index() {
           style={[{ padding: 14 }, styles.bottomContainers]}
         >
           <TouchableOpacity>
-            <SurfaceFlaw label={reportLabel} data={reportData} uri={reportImage} type={reportType} />
+            {!isDetailsLoading ? <SurfaceFlaw label={reportLabel} data={reportData} uri={reportImage} type={reportType} /> : <Loading />}
           </TouchableOpacity>
         </Link>
       ) : (
@@ -74,7 +120,7 @@ export default function index() {
         <ThemedText style={{ fontSize: 16, marginBottom: 5 }} type="title">
           REPORTS
         </ThemedText>
-        <ReportList setActiveReport={setActiveReportID} data={dummyData} />
+        {!isListLoading ? <ReportList setActiveReport={setActiveReportID} data={reportList} /> : <Loading />}
       </View>
     </View>
   )
