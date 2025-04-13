@@ -7,6 +7,7 @@ import Checkbox from "expo-checkbox"
 import { Redirect, useRouter } from "expo-router"
 import FormEntry from "@/components/FormEntry"
 import ThemedButton from "@/components/ThemedButton"
+import { signInUser } from "../api/utils"
 
 export default function login() {
   const { session, setSession } = useSession()
@@ -15,6 +16,8 @@ export default function login() {
   const [formPassword, setFormPassword] = useState("")
   const [formEmail, setFormEmail] = useState("")
   const [formRememberMe, setFormRememberMe] = useState(false)
+
+  const [errorFallback, setErrorFallback] = useState(null)
 
   const router = useRouter()
 
@@ -29,9 +32,13 @@ export default function login() {
   }, [])
 
   const handleLogin = async () => {
-    setSession("12345")
-    console.log(session)
-    router.replace("/")
+    const result = await signInUser(formEmail, formPassword, setErrorFallback)
+    if (result) {
+      setErrorFallback(null)
+      setSession(result)
+      router.replace("/")
+    }
+    // router.replace("/")
   }
 
   return (
@@ -60,6 +67,9 @@ export default function login() {
           placeholder={"Enter your password"}
           secure
         />
+        {errorFallback && (
+          <ThemedText style={{ textAlign: "center", fontSize: 12, margin: 5, color: "red" }}>{String(errorFallback).toUpperCase()}</ThemedText>
+        )}
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10 }}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Checkbox
@@ -79,7 +89,7 @@ export default function login() {
             <ThemedText style={{ fontSize: 14, color: "#0000FF" }}>Forgot your password?</ThemedText>
           </TouchableOpacity>
         </View>
-        <ThemedButton onPress={handleLogin} text={"Login"} />
+        <ThemedButton onPress={() => handleLogin()} text={"Login"} />
         <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 20 }}>
           <ThemedText style={{ color: "#828282", fontSize: 12 }}>Need an account?</ThemedText>
           <TouchableOpacity onPress={() => router.push("/SignUp")}>

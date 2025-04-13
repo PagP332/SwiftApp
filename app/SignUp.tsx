@@ -5,9 +5,17 @@ import { ThemedText } from "@/components/ThemedText"
 import { useRouter } from "expo-router"
 import FormEntry from "@/components/FormEntry"
 import ThemedButton from "@/components/ThemedButton"
+import { signUpNewUser } from "@/api/utils"
 
 export default function signUp() {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false)
+
+  const [formEmail, setFormEmail] = useState("")
+  const [formName, setFormName] = useState("")
+  const [formPassword, setFormPassword] = useState("")
+  const [formConfirmPassword, setFormConfirmPassword] = useState("")
+
+  const [errorFallback, setErrorFallback] = useState(null)
 
   const router = useRouter()
 
@@ -21,6 +29,14 @@ export default function signUp() {
     }
   }, [])
 
+  const handleSignUp = async () => {
+    if (formPassword !== formConfirmPassword) {
+      setErrorFallback("Passwords do not match")
+      return
+    }
+    const result = await signUpNewUser(formEmail, formName, formPassword, setErrorFallback)
+  }
+
   return (
     <View style={styles.container}>
       {!isKeyboardVisible && <SwiftLogo absolute />}
@@ -30,23 +46,31 @@ export default function signUp() {
         </ThemedText>
         <FormEntry
           style={styles.form}
-          value={undefined}
-          onChangeText={undefined}
+          value={formEmail}
+          onChangeText={setFormEmail}
           textLabel={"Email"}
           placeholder={"Enter your email"}
           keyboardType="email-address"
         />
-        <FormEntry style={styles.form} value={undefined} onChangeText={undefined} textLabel={"Name"} placeholder={"Enter your name"} />
-        <FormEntry style={styles.form} value={undefined} onChangeText={undefined} textLabel={"Password"} placeholder={"Enter your password"} secure />
+        <FormEntry style={styles.form} value={formName} onChangeText={setFormName} textLabel={"Name"} placeholder={"Enter your name"} />
         <FormEntry
           style={styles.form}
-          value={undefined}
-          onChangeText={undefined}
+          value={formPassword}
+          onChangeText={setFormPassword}
+          textLabel={"Password"}
+          placeholder={"Enter your password"}
+          secure
+        />
+        <FormEntry
+          style={styles.form}
+          value={formConfirmPassword}
+          onChangeText={setFormConfirmPassword}
           textLabel={"Confirm Password"}
           placeholder={"Confirm your password"}
           secure
         />
-        <ThemedButton onPress={() => {}} text={"Sign Up"} />
+        {errorFallback && <ThemedText style={{ color: "red", fontSize: 12, textAlign: "center" }}>{String(errorFallback).toUpperCase()}</ThemedText>}
+        <ThemedButton onPress={() => handleSignUp()} text={"Sign Up"} />
         <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 20 }}>
           <ThemedText style={{ color: "#828282", fontSize: 12 }}>Already have an account?</ThemedText>
           <TouchableOpacity onPress={() => router.push("/login")}>
