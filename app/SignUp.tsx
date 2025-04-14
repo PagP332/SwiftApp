@@ -1,4 +1,4 @@
-import { Keyboard, Pressable, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native"
+import { Keyboard, Modal, Pressable, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native"
 import React, { useEffect, useState } from "react"
 import SwiftLogo from "@/components/SwiftLogo"
 import { ThemedText } from "@/components/ThemedText"
@@ -15,6 +15,8 @@ export default function signUp() {
   const [formPassword, setFormPassword] = useState("")
   const [formConfirmPassword, setFormConfirmPassword] = useState("")
 
+  const [isSuccess, setIsSuccess] = useState(false)
+
   const [errorFallback, setErrorFallback] = useState(null)
 
   const router = useRouter()
@@ -30,15 +32,42 @@ export default function signUp() {
   }, [])
 
   const handleSignUp = async () => {
+    if (formEmail === "_debug") {
+      console.log("debug called")
+      setIsSuccess(true)
+      return
+    }
     if (formPassword !== formConfirmPassword) {
       setErrorFallback("Passwords do not match")
       return
     }
     const result = await signUpNewUser(formEmail, formName, formPassword, setErrorFallback)
+    if (result) {
+      setIsSuccess(true)
+    }
+  }
+
+  const backToLogin = () => {
+    router.push("/login")
+    setIsSuccess(false)
+  }
+
+  const SuccessModal = () => {
+    return (
+      <Modal animationType="slide" transparent={true} visible={isSuccess}>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#00000080" }}>
+          <View style={{ backgroundColor: "white", paddingVertical: 30, paddingHorizontal: 70, borderRadius: 20 }}>
+            <ThemedText>Sign up success!</ThemedText>
+            <ThemedButton onPress={backToLogin} text={"Back to Login"} style={{ width: "100%" }} />
+          </View>
+        </View>
+      </Modal>
+    )
   }
 
   return (
     <View style={styles.container}>
+      {isSuccess && <SuccessModal />}
       {!isKeyboardVisible && <SwiftLogo absolute />}
       <View style={[{ justifyContent: "center", width: "100%" }]}>
         <ThemedText type="title" style={{ fontSize: 20, justifyContent: "center", textAlign: "center", marginBottom: 20 }}>
