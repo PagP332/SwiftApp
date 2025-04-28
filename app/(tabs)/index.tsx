@@ -8,6 +8,7 @@ import { Link } from "expo-router"
 import { dummyData } from "@/constants/dummy"
 import { getReportDetails, getReportList, realtimeReportChannel, unsubToChannel } from "@/api/utils"
 import Loading from "@/components/Loading"
+import StatusIndicator from "@/components/StatusIndicator"
 
 export default function index() {
   const [activeTab, setActiveTab] = useState(0)
@@ -94,8 +95,8 @@ export default function index() {
         <TouchableOpacity style={[styles.tabButton, activeTab === 1 && styles.active]} onPress={() => handleActiveTab(1)}>
           <ThemedText style={[styles.text, activeTab === 1 && styles.activeText]}>Wheel Diameter</ThemedText>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabButton, activeTab === 2 && styles.active]} onPress={() => setActiveTab(2)}>
-          <ThemedText style={[styles.text, activeTab === 2 && styles.activeText]}> </ThemedText>
+        <TouchableOpacity style={{ gap: 10, marginHorizontal: 10 }}>
+          <StatusIndicator />
         </TouchableOpacity>
       </View>
       {activeReportID ? (
